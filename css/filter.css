@@ -1,0 +1,87 @@
+div {
+    float: left;
+    margin: 30px;
+    width: 100px;
+    height: 150px;
+}
+
+img {
+    width: 100%;
+}
+
+span {
+    display: block;
+    width: 150px;
+    font-size: 12px;
+}
+
+#img1 {
+    filter: blur(3px);
+}
+
+#img2 {
+    filter: brightness(50%);
+}
+
+#img3 {
+    filter: contrast(150%);
+}
+
+#img4 {
+    filter: drop-shadow(3px 3px 3px #6e1c00);
+}
+
+#img5 {
+    filter: grayscale(50%);
+}
+
+#img6 {
+    filter: hue-rotate(30deg)
+}
+
+#img7 {
+    filter: invert(1);
+}
+
+#img8 {
+    filter: opacity(50%);
+}
+
+#img9 {
+    filter: saturate(0);
+}
+
+#img10 {
+    filter: grayscale(1) sepia(0.5)
+}
+
+#img11 {
+    filter: sepia(0.5) grayscale(1)
+}
+
+#img12 {
+    backdrop-filter: blur(1px)
+}
+
+#outer {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    background: url(food.png) no-repeat;
+}
+
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none){
+    #inner {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 50px;
+        height: 50px;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+    }
+}
+
+

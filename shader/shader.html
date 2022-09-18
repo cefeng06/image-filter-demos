@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shader Filter Demo</title>
+</head>
+<body>
+    <canvas width="400" height="400"></canvas>
+</body>
+<script src="../utils/utils.js"></script>
+<script>
+    // 1.创建webgl上下文
+    const canvas = document.querySelector('canvas');
+    const gl = canvas.getContext('webgl');
+
+    // 2. 创建webglProgram
+    const vertex = `
+        attribute vec4 a_Position;
+        attribute vec2 a_TexCoord;
+        varying vec2 v_TexCoord;
+        void main () {
+            gl_Position = a_Position;
+            // 将纹理坐标传递给片源着色器
+            v_TexCoord = a_TexCoord;
+        }
+    `;
+
+    const fragment = `
+        precision mediump float;
+        uniform sampler2D u_Sampler;
+        uniform mat4 t_Matrix;
+        varying vec2 v_TexCoord;
+        void main () {
+            vec4 color = texture2D(u_Sampler, v_TexCoord);
+            vec4 transColor = t_Matrix * color; 
+            gl_FragColor = transColor;
+        }
+    `;
+
+    const filter = {
+        original: [
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+        ],
+        grey: [
+            0.33, 0.33, 0.33, 0,
+            0.33, 0.33, 0.33, 0,
+            0.33, 0.33, 0.33, 0,
+            0, 0, 0, 1,
+        ],
+        invert: [
+            -1, 0, 0, 0,
+            0, -1, 0, 0,
+            0, 0, -1, 0,
+            1, 1, 1, 1
+        ],
+        brightness: [
+            1.2, 0, 0, 0,
+            0, 1.2, 0, 0,
+            0, 0, 1.2, 0,
+            0, 0, 0, 1
+        ],
+        red: [
+            1.0, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 1
+        ],
+        contrast: [
+            1.2, 0, 0, 0,
+            0, 1.2, 0, 0,
+            0, 0, 1.2, 0,
+            -0.2, -0.2, -0.2, 1
+        ],
+        swap: [
+            0, 0, 1, 0,
+            0, 1, 0, 0,
+            1, 0, 0, 0,
+            0, 0, 0, 1
+        ]
+
+    }
+
+    const initFilterMatrix = (gl, name) => {
+        const matrixLocation = gl.getUniformLocation(gl.program, "t_Matrix");
+        gl.uniformMatrix4fv(matrixLocation, false, filter[name])
+    }
+
+    initShaders(gl,vertex,fragment);
+    initVertexbuffer(gl);
+    initFilterMatrix(gl, "original");
+    const image = new Image();
+    image.src = '../food.png';
+    image.onload = () => {
+        initTexture(gl, image);
+        gl.clearColor(0, 0, 0, 0)
+        gl.clear(gl.COLOR_BUFFER_BIT)
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+    }
+</script>
+</html>
